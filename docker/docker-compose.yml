@@ -1,0 +1,45 @@
+version: "3"
+services:
+
+  database:
+    image: "postgres:11"
+    container_name: "semantive_database"
+    env_file:
+      - ../app/.env
+    ports:
+      - "54320:5432"
+    volumes:
+      - ./../database:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    container_name: semantive_redis
+    ports: 
+      - "6379:6379"
+
+  application:
+    container_name: semantive_application
+    restart: always
+    build:
+      context: ./..
+      dockerfile: ./docker/dockerfile_app
+    ports: 
+      - "5050:5000"
+    depends_on:
+      - redis
+      - database
+    env_file:
+      - ../app/.env
+
+  worker:
+    container_name: semantive_worker
+    restart: always
+    build:
+      context: ./..
+      dockerfile: ./docker/dockerfile_tasks
+    command: celery -A tasks worker --loglevel=info
+    depends_on:
+      - redis
+      - database
+    env_file:
+      - ../app/.env

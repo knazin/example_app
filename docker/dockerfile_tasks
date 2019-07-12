@@ -1,0 +1,12 @@
+FROM python:3.7-slim
+
+ENV C_FORCE_ROOT true
+
+COPY ./app/api /api
+COPY ./app/requirements.txt /api/requirements.txt
+COPY ./app/.env .
+WORKDIR /api
+
+RUN pip install -r requirements.txt
+
+# ENTRYPOINT celery -A tasks worker --loglevel=info
