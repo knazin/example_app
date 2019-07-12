@@ -96,6 +96,10 @@ def getimages(self, url):
         try:
             image_url = image.attrib['src']
 
+            # some image urls don't contain http at start
+            if 'http' not in image_url and '//' in image_url:
+                image_url = 'http:' + image_url
+
             if validators.url(image_url) and '[' not in image_url and ']' not in image_url:
                 r = requests.get(image_url)
                 image_ext = image_url.split('.')[-1]
