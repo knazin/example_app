@@ -106,7 +106,7 @@ Aby moc przetestowac aplikacje trzeba wykonac nastepujace czynnosci:
    ```
 5. Odpalic worker'a aplikacji
    ```bash
-    # bedac w sciezce .../semantive_downloader/app/tasks
+    # bedac w sciezce .../semantive_downloader/app/api
     $ (myenv) celery -A tasks worker --loglevel=info
    ```
 6. W kolejnym nowym oknie terminala wejsc w lokalne srodowisko <i>myenv</i> i odpalic testy
