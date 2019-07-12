@@ -71,3 +71,21 @@ def run_fetch_task(item, task_name, url):
     message += " from this website is already downloaded."
 
     return jsonify({"url": url, "message": message}), 206
+
+
+def downloaded_data(data_in_db, url, data_type):
+    
+    if not data_in_db:
+        return jsonify({
+            "url": url,
+            "message": "No images for this url" if data_type == 'images' else "No text for this url"
+        }), 204
+
+    elif data_type == 'images':
+        pass
+    elif data_type == 'text':
+            return jsonify({
+            "task_id": data_in_db.task_id,
+            "url": url,
+            "text_from_website": data_in_db.text,
+        }), 200
