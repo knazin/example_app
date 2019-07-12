@@ -14,6 +14,11 @@ import requests
 import celery.states as states
 from lxml.html import fromstring, HtmlElement
 
+import zipfile
+from io import BytesIO
+from zipfile import ZipFile
+from flask import session, jsonify, url_for, send_file
+
 
 def set_message_and_state(res):
     
@@ -66,6 +71,22 @@ def name_from_image_attributes(image_attributes, nr, image_ext):
     return image_name
 
 
+def pack_images_to_zipfile(images):
+    
+    file = BytesIO()
+    
+    with zipfile.ZipFile(file, 'w') as zf:
+        
+        for image in images:
+            data = zipfile.ZipInfo(image.name)
+            data.compress_type = zipfile.ZIP_DEFLATED
+            zf.writestr(data, image.data)
+    
+    file.seek(0)
+
+    return file
+
+
 def run_fetch_task(item, task_name, url):
 
     if not item:
@@ -93,7 +114,10 @@ def downloaded_data(data_in_db, url, data_type):
         }), 206
 
     elif data_type == 'images':
-        pass
+        
+        zipped_images = pack_images_to_zipfile(data_in_db)
+        return send_file(zipped_images, attachment_filename='images.zip', as_attachment=True), 200
+
     elif data_type == 'text':
             return jsonify({
             "task_id": data_in_db.task_id,

@@ -31,7 +31,10 @@ def download_text():
 
 @api.route("/images", methods=["GET"])
 def download_images():
-    return ""
+    url = request.json["url"]
+    images = Image.query.filter_by(url=url).all()
+
+    return downloaded_data(images, url, 'images')
 
 
 @api.route("/task/<string:task_id>", methods=["GET"])
