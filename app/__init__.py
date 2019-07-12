@@ -7,10 +7,14 @@ from app.config import config
 
 app = Flask(__name__)
 
-def update_app(application, config_name):
+def update_app(application, db, config_name):
 
     # configuration
     app.config.from_object(config[config_name])
+
+    # register database
+    db.app = application
+    db.init_app(application)
 
     # swagger specific
     SWAGGER_URL = '/api/v1/docs'
