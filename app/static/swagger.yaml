@@ -44,7 +44,7 @@ paths:
           description: "Downloading text from db"
           schema:
             $ref: "#/definitions/Text"
-        204:
+        206:
           description: "No text for this url in database"
           schema:
             $ref: "#/definitions/NoContent"
@@ -81,7 +81,7 @@ paths:
           description: "The fetching text has been accepted for processing, but the processing has not been completed"
           schema:
             $ref: "#/definitions/RedirectToTask"
-        204:
+        206:
           description: "Text is already downloaded for this url"
           schema:
             $ref: "#/definitions/AlreadyDownloaded"
@@ -121,7 +121,7 @@ paths:
           description: "Return zip file with images on the website"
           schema:
             type: file
-        204:
+        206:
           description: "No images for this url in database"
           schema:
             $ref: "#/definitions/NoContent"
@@ -158,7 +158,7 @@ paths:
           description: "The fetching images has been accepted for processing, but the processing has not been completed"
           schema:
             $ref: "#/definitions/RedirectToTask"
-        204:
+        206:
           description: "Images is already downloaded for this url"
           schema:
             $ref: "#/definitions/AlreadyDownloaded"
