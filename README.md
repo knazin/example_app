@@ -72,7 +72,7 @@ Szczegółową instrukcje posługiwania się mikroserwisem uzytkownik znajdzie p
 <i>/api/v1/docs/</i>
 
 WSTAW OBRAZEK
-
+![API_docs](docs/api_docs.png)
 
 
 ## Testowanie
