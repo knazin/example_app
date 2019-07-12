@@ -19,7 +19,7 @@ def update_app(application, db, config_name):
     db.init_app(application)
 
     # register blueprints
-    application.register_blueprint(api, url_prefix='/api/v1')
+    application.register_blueprint(api, url_prefix="/api/v1")
 
     # swagger specific
     SWAGGER_URL = "/api/v1/docs"
