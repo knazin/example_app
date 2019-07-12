@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from . import api
-from .models import Text
+from .models import Text, Image
 from .worker import celery
 from .methods import run_fetch_task, set_message_and_state, downloaded_data
 
@@ -15,7 +15,10 @@ def fetch_text():
 
 @api.route("/images", methods=["POST"])
 def fetch_images():
-    return ""
+    url = request.json["url"]
+    images = Image.query.filter_by(url=url).all()
+
+    return run_fetch_task(images, 'get_images', url)
 
 
 @api.route("/text", methods=["GET"])

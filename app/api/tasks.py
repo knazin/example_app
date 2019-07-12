@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 import validators
 
 from models import Text, Image
-from methods import extract_text_from_html
+from methods import extract_text_from_html, name_from_image_attributes
 
 from dotenv import load_dotenv
 
@@ -72,3 +72,47 @@ def get_text(self, url):
 
     except Exception as e:
         return "ERROR " + str(e)
+
+
+@celery.task(bind=True, name='get_images')
+def getimages(self, url):
+    
+    task_id = self.request.id
+
+    try:
+        r = requests.get(url)
+        html = fromstring(r.text)
+        images = html.cssselect('img')
+    except Exception as e:
+        return f"ERROR {str(e)}"
+
+    duplicates = 0
+    errors = 0
+    not_valid_image_url = 0
+    
+    for nr, image in enumerate(images):
+        print(nr)
+    
+        try:
+            image_url = image.attrib['src']
+
+            if validators.url(image_url) and '[' not in image_url and ']' not in image_url:
+                r = requests.get(image_url)
+                image_ext = image_url.split('.')[-1]
+                image_name = name_from_image_attributes(image.attrib, nr, image_ext)
+
+                img = Image(url, str(task_id), image_name, image_url, r.content)
+                session.add(img)
+                session.commit()
+
+            else:
+                not_valid_image_url += 1
+                print('Invalid url', image_url)
+
+        except Exception as e:
+            if 'source_url' in str(e):
+                duplicates += 1
+            else:
+                errors += 1
+        
+    return f"Downloaded {1+nr-duplicates-errors-not_valid_image_url}, Duplicates: {duplicates}, Not valid image_urls: {not_valid_image_url}, Errors: {errors}"

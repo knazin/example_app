@@ -52,19 +52,30 @@ def extract_text_from_html(url):
     return text
 
 
+def name_from_image_attributes(image_attributes, nr, image_ext):
+    
+    if 'title' in image_attributes and image_attributes['title'] != '':
+        image_name = image_attributes['title']
+    elif 'alt' in image_attributes and image_attributes['alt'] != '':
+        image_name = image_attributes['alt']
+    else:
+        image_name = f'image_{nr}'
+
+    image_name = image_name.replace('/','') + f'.{image_ext}'
+
+    return image_name
+
+
 def run_fetch_task(item, task_name, url):
 
     if not item:
         task = celery.send_task(task_name, args=[url], kwargs={})
 
         return (
-            jsonify(
-                {
-                    "task_id": str(task.id),
-                    "check_task_status": f"{url_for('api.check_task', task_id=task.id, external=True)}",
-                }
-            ),
-            202,
+            jsonify({
+                "task_id": str(task.id),
+                "check_task_status": f"{url_for('api.check_task', task_id=task.id, external=True)}",
+            }), 202,
         )
 
     message = "Images" if "text" in task_name else "Text"
@@ -79,7 +90,7 @@ def downloaded_data(data_in_db, url, data_type):
         return jsonify({
             "url": url,
             "message": "No images for this url" if data_type == 'images' else "No text for this url"
-        }), 204
+        }), 206
 
     elif data_type == 'images':
         pass
