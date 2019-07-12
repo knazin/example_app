@@ -1,0 +1,238 @@
+swagger: "2.0"
+host: "localhost:5000"
+basePath: "/api/v1"
+info:
+  description: "This is a API documentation of Semantive Downloader App."
+  version: "1.0.0"
+  title: "Semantive Downloader"
+  contact:
+    email: "knazkacper@gmail.pl"
+tags:
+- name: "text"
+  description: "Fetch or Download text from website"
+- name: "images"
+  description: "Fetch or Download images from website"
+- name: "task"
+  description: "Information about task"
+schemes:
+- "http"
+paths:
+  /text:
+  
+    get:
+      tags:
+      - "text"
+      summary: "Download text from website to your computer"
+      description: ""
+      operationId: "DownloadTextFromWebsite"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "url"
+        in: "body"
+        description: "URL to choosen website"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            url:
+              type: "string"
+      responses:
+        200:
+          description: "Downloading text from db"
+          schema:
+            $ref: "#/definitions/Text"
+        204:
+          description: "No text for this url in database"
+          schema:
+            $ref: "#/definitions/NoContent"
+        400:
+          description: "Invalid body supplied"
+          # schema:
+          #   type: "object"
+          #   properties:
+          #     message:
+          #       type: "string"
+          
+    post:
+      tags:
+      - "text"
+      summary: "Fetch text from website"
+      description: ""
+      operationId: "FetchTextFromWebsite"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "url"
+        in: "body"
+        description: "URL to choosen website"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            url:
+              type: "string"
+      responses:
+        202:
+          description: "The fetching text has been accepted for processing, but the processing has not been completed"
+          schema:
+            $ref: "#/definitions/RedirectToTask"
+        204:
+          description: "Text is already downloaded for this url"
+          schema:
+            $ref: "#/definitions/AlreadyDownloaded"
+        400:
+          description: "Invalid body supplied"
+          # schema:
+          #   type: "object"
+          #   properties:
+          #     message:
+          #       type: "string"
+        
+        
+  /images:
+
+    get:
+      tags:
+      - "images"
+      summary: "Download images from website to your computer"
+      description: ""
+      operationId: "DownloadImagesFromWebsite"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/zip"
+      parameters:
+      - name: "url"
+        in: "body"
+        description: "URL to choosen website"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            url:
+              type: "string"
+      responses:
+        200:
+          description: "Return zip file with images on the website"
+          schema:
+            type: file
+        204:
+          description: "No images for this url in database"
+          schema:
+            $ref: "#/definitions/NoContent"
+        400:
+          description: "Invalid body supplied"
+          # schema:
+          #   type: "object"
+          #   properties:
+          #     message:
+          #       type: "string"
+          
+    post:
+      tags:
+      - "images"
+      summary: "Fetch images from website"
+      description: ""
+      operationId: "FetchImagesFromWebsite"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/zip"
+      parameters:
+      - name: "url"
+        in: "body"
+        description: "URL to choosen website"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            url:
+              type: "string"
+      responses:
+        202:
+          description: "The fetching images has been accepted for processing, but the processing has not been completed"
+          schema:
+            $ref: "#/definitions/RedirectToTask"
+        204:
+          description: "Images is already downloaded for this url"
+          schema:
+            $ref: "#/definitions/AlreadyDownloaded"
+        400:
+          description: "Invalid body supplied"
+          # schema:
+          #   type: "object"
+          #   properties:
+          #     message:
+          #       type: "string"
+        
+        
+  /task/{task_id}:
+    get:
+      tags:
+      - "task"
+      summary: "Check status of choosen task"
+      description: ""
+      operationId: "CheckStatus"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "task_id"
+        in: "path"
+        type: "string"
+        description: "Id of specific task"
+        required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Task"
+        400:
+          description: "Invalid task_id supplied"
+      
+definitions:
+  Text:
+    type: "object"
+    properties:
+      task_id:
+        type: "string"
+      url:
+        type: "string"
+      text_from_website:
+        type: "string"
+  Task:
+    type: "object"
+    properties:
+      task_id:
+        type: "string"
+      state:
+        type: "string"
+      message:
+        type: "string"
+  NoContent:
+    type: "object"
+    properties:
+      url:
+        type: "string"
+      message:
+        type: "string"
+  AlreadyDownloaded:
+    type: "object"
+    properties:
+      url:
+        type: "string"
+      message:
+        type: "string"
+  RedirectToTask:
+    type: "object"
+    properties:
+      task_id:
+        type: "string"
+      check_task_status:
+        type: "string"
