@@ -4,6 +4,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from flask_sqlalchemy import SQLAlchemy
 
 from app.config import config
+from app.api.routes import api
 
 app = Flask(__name__)
 
@@ -11,11 +12,14 @@ app = Flask(__name__)
 def update_app(application, db, config_name):
 
     # configuration
-    app.config.from_object(config[config_name])
+    application.config.from_object(config[config_name])
 
     # register database
     db.app = application
     db.init_app(application)
+
+    # register blueprints
+    application.register_blueprint(api, url_prefix='/api/v1')
 
     # swagger specific
     SWAGGER_URL = "/api/v1/docs"

@@ -1,9 +1,17 @@
+from flask import request
 from . import api
+from .models import Text
+from .methods import (
+    run_fetch_task
+)
 
 
 @api.route("/text", methods=["POST"])
 def fetch_text():
-    return ""
+    url = request.json["url"]
+    text = Text.query.filter_by(url=url).first()
+
+    return run_fetch_task(text, 'get_text', url)
 
 
 @api.route("/images", methods=["POST"])

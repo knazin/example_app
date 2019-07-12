@@ -3,6 +3,7 @@
 /database
 /app/test.db
 /app/app.db
+*dump.rdb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
