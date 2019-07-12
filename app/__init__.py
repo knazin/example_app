@@ -7,6 +7,7 @@ from app.config import config
 
 app = Flask(__name__)
 
+
 def update_app(application, db, config_name):
 
     # configuration
@@ -17,16 +18,16 @@ def update_app(application, db, config_name):
     db.init_app(application)
 
     # swagger specific
-    SWAGGER_URL = '/api/v1/docs'
-    API_URL = '/static/swagger.yaml'
-    SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(SWAGGER_URL, API_URL,
-        config={ 'app_name': "Python-Flask-REST"}
+    SWAGGER_URL = "/api/v1/docs"
+    API_URL = "/static/swagger.yaml"
+    SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+        SWAGGER_URL, API_URL, config={"app_name": "Python-Flask-REST"}
     )
     application.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
     return application
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return redirect('api/v1/docs')
+    return redirect("api/v1/docs")
